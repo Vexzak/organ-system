@@ -32,7 +32,7 @@ function CameraZoom({ zoomAction }) {
 }
 
 function MuscularModel({ onSelect, selectedMesh, isSpinning }) {
-  const { scene } = useGLTF("https://github.com/Vexzak/organ-system/releases/download/v1.0/muscular_system.glb")
+  const { scene } = useGLTF("https://ronvremnakncnmiphjkg.supabase.co/storage/v1/object/public/glb-files/muscular_system.glb")
   const materialsRef = useRef({})
   const groupRef = useRef()
 

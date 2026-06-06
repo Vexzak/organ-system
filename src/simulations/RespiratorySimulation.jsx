@@ -42,7 +42,7 @@ function CameraZoom({ zoomAction }) {
 }
 
 function RespiratoryModel({ onSelect, selectedOrgan, isSpinning }) {
-  const { scene, animations } = useGLTF("https://github.com/Vexzak/organ-system/releases/download/v1.0/respiratory_system.glb")
+  const { scene, animations } = useGLTF("https://ronvremnakncnmiphjkg.supabase.co/storage/v1/object/public/glb-files/respiratory_system.glb")
   const originalColorsRef = useRef({})
   const groupRef = useRef()
   const { actions } = useAnimations(animations, groupRef)

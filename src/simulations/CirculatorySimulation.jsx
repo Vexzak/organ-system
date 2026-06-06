@@ -37,7 +37,7 @@ function CameraZoom({ zoomAction }) {
 }
 
 function CirculatoryModel({ onSelect, selectedOrganId, isDragging, isSpinning }) {
-  const { scene, animations } = useGLTF("https://github.com/Vexzak/organ-system/releases/download/v1.0/circulatory_system.glb")
+  const { scene, animations } = useGLTF("https://ronvremnakncnmiphjkg.supabase.co/storage/v1/object/public/glb-files/circulatory_system.glb")
   const { raycaster } = useThree()
   const materialsRef = useRef({})
   const groupRef = useRef()
