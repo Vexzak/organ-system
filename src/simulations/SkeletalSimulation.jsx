@@ -34,7 +34,7 @@ function CameraZoom({ zoomAction }) {
 
 function SkeletalModel({ onSelect, selectedBone, isSpinning }) {
   const MODEL_SCALE = 1.45
-  const { scene } = useGLTF("/skeletal_system.glb")
+  const { scene } = useGLTF("https://drive.google.com/uc?export=download&id=1_1qPSA3_hFeLny00yH1CeFr43YdjxrcD")
   const materialsRef = useRef({})
   const groupRef = useRef()
 
