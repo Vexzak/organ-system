@@ -115,12 +115,71 @@ export default function SystemPage() {
                 Organ System
               </div>
 
-              <h1
-                className="font-black mb-2 leading-tight"
-                style={{ fontSize: 'clamp(2rem, 4vw, 3rem)', color: '#1a2e4a' }}
-              >
-                {system.name}
-              </h1>
+              <div className="flex items-start gap-3 mb-2">
+                <h1
+                  className="font-black leading-tight"
+                  style={{ fontSize: 'clamp(2rem, 4vw, 3rem)', color: '#1a2e4a' }}
+                >
+                  {system.name}
+                </h1>
+
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.preventDefault()
+                    e.stopPropagation()
+
+                    const mp3BySystemId = {
+                      digestive: '/digestive_system.mp3',
+                      circulatory: '/circulatory_system.mp3',
+                      skeletal: '/skeletal_system.mp3',
+                      muscular: '/muscular_system.mp3',
+                      respiratory: '/respiratory_system.mp3',
+                    }
+
+                    const src = mp3BySystemId[system.id]
+                    if (!src) return
+
+                    try {
+                      const audio = new Audio(src)
+                      audio.play().catch(() => {})
+                    } catch {}
+                  }}
+                  aria-label={`Play ${system.name} audio`}
+                  className="shrink-0 inline-flex items-center justify-center"
+                  style={{
+                    width: 42,
+                    height: 42,
+                    borderRadius: 14,
+                    background: 'rgba(219,234,254,0.7)',
+                    border: '1px solid rgba(147,197,253,0.45)',
+                    boxShadow: '0 1px 6px rgba(0,0,0,0.04)',
+                    color: '#3b82f6',
+                    cursor: 'pointer',
+                  }}
+                >
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <path
+                      d="M11 5L6.5 9H3v6h3.5L11 19V5Z"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinejoin="round"
+                    />
+                    <path
+                      d="M15.54 8.46a5 5 0 0 1 0 7.07"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                    />
+                    <path
+                      d="M18.36 5.64a9 9 0 0 1 0 12.72"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                    />
+                  </svg>
+                </button>
+              </div>
 
               <p className="font-medium mb-4" style={{ fontSize: '16px', color: '#3b82f6' }}>
                 {system.tagline}

@@ -1,8 +1,9 @@
-import { useRef, useEffect, useState, useCallback } from "react"
-import { Canvas, useFrame, useThree } from "@react-three/fiber"
+import { useRef, useEffect, useLayoutEffect, useState, useCallback } from "react"
+import { Canvas, useFrame } from "@react-three/fiber"
 import { useGLTF, OrbitControls, Environment } from "@react-three/drei"
 import * as THREE from "three"
 import useAppStore from "../store/useAppStore"
+import SmoothCameraZoom from "./SmoothCameraZoom"
 
 const MESH_TO_ORGAN_ID = {
   abdominals:     "abdominals",
@@ -17,31 +18,23 @@ const ORGAN_ID_TO_MESH = Object.fromEntries(
   Object.entries(MESH_TO_ORGAN_ID).map(([mesh, id]) => [id, mesh])
 )
 
-function CameraZoom({ zoomAction }) {
-  const { camera } = useThree()
-  useEffect(() => {
-    if (!zoomAction) return
-    const direction = new THREE.Vector3()
-    camera.getWorldDirection(direction)
-    const step = zoomAction === "in" ? 0.4 : -0.4
-    const next = camera.position.clone().addScaledVector(direction, step)
-    const dist = next.length()
-    if (dist >= 1.5 && dist <= 8) camera.position.copy(next)
-  }, [zoomAction, camera])
-  return null
-}
-
 function MuscularModel({ onSelect, selectedMesh, isSpinning }) {
   const { scene } = useGLTF("https://ronvremnakncnmiphjkg.supabase.co/storage/v1/object/public/glb-files/muscular_system.glb")
   const materialsRef = useRef({})
   const groupRef = useRef()
 
   // Center the model
-  useEffect(() => {
+  useLayoutEffect(() => {
+    scene.position.set(0, 0, 0)
+    scene.rotation.set(0, 0, 0)
+    scene.scale.set(1, 1, 1)
+    scene.updateMatrixWorld(true)
+
     const box = new THREE.Box3().setFromObject(scene)
     const center = new THREE.Vector3()
     box.getCenter(center)
     scene.position.set(-center.x, -center.y, -center.z)
+    scene.updateMatrixWorld(true)
   }, [scene])
 
   // Clone materials and store original colors
@@ -138,19 +131,10 @@ function MuscularModel({ onSelect, selectedMesh, isSpinning }) {
 export default function MuscularSimulation({ system }) {
   const { currentOrgan, setCurrentOrgan } = useAppStore()
   const [isSpinning] = useState(true)
-  const [zoomAction, setZoomAction] = useState(null)
-  const zoomTimerRef = useRef(null)
+  const [zoomCommand, setZoomCommand] = useState(null)
 
   const triggerZoom = useCallback((direction) => {
-    setZoomAction(direction)
-    if (zoomTimerRef.current) clearTimeout(zoomTimerRef.current)
-    zoomTimerRef.current = setTimeout(() => setZoomAction(null), 50)
-  }, [])
-
-  useEffect(() => {
-    return () => {
-      if (zoomTimerRef.current) clearTimeout(zoomTimerRef.current)
-    }
+    setZoomCommand({ direction, id: performance.now() })
   }, [])
 
   const selectedMesh = currentOrgan ? ORGAN_ID_TO_MESH[currentOrgan.id] ?? null : null
@@ -200,7 +184,7 @@ export default function MuscularSimulation({ system }) {
         <pointLight position={[0, -3, 2]} intensity={0.5} color="#ffffff" />
         <Environment preset="sunset" environmentIntensity={0.45} />
 
-        <CameraZoom zoomAction={zoomAction} />
+        <SmoothCameraZoom command={zoomCommand} minDistance={0.9} maxDistance={18} zoomFactor={0.65} />
 
         <MuscularModel
           onSelect={handleSelect}
@@ -209,7 +193,9 @@ export default function MuscularSimulation({ system }) {
         />
         <OrbitControls
           enablePan={false}
-          minDistance={1.5}
+          enableDamping
+          dampingFactor={0.08}
+          minDistance={0.9}
           maxDistance={18}
           target={[0, 0, 0]}
         />

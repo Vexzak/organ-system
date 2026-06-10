@@ -1,8 +1,9 @@
-import { useRef, useEffect, useCallback, useState } from "react"
+import { useRef, useEffect, useLayoutEffect, useCallback, useState } from "react"
 import { Canvas, useThree, useFrame } from "@react-three/fiber"
 import { useGLTF, OrbitControls, Environment, useAnimations } from "@react-three/drei"
 import * as THREE from "three"
 import useAppStore from "../store/useAppStore"
+import SmoothCameraZoom from "./SmoothCameraZoom"
 
 const MESH_TO_ORGAN_ID = {
   heart_v2:              'heart',
@@ -24,17 +25,6 @@ function findOrganId(object) {
 }
 
 const BLUE = new THREE.Color('#3b82f6')
-
-function CameraZoom({ zoomAction }) {
-  const { camera } = useThree()
-  useEffect(() => {
-    if (!zoomAction) return
-    const nextZoom = zoomAction === "in" ? camera.zoom * 10 : camera.zoom / 10
-    camera.zoom = Math.min(25, Math.max(0.2, nextZoom))
-    camera.updateProjectionMatrix()
-  }, [zoomAction, camera])
-  return null
-}
 
 function CirculatoryModel({ onSelect, selectedOrganId, isDragging, isSpinning }) {
   const { scene, animations } = useGLTF("https://ronvremnakncnmiphjkg.supabase.co/storage/v1/object/public/glb-files/circulatory_system.glb")
@@ -58,12 +48,18 @@ function CirculatoryModel({ onSelect, selectedOrganId, isDragging, isSpinning })
     raycaster.params.Mesh.threshold = 0.1
   }, [raycaster])
 
-  useEffect(() => {
+  useLayoutEffect(() => {
+    scene.position.set(0, 0, 0)
+    scene.rotation.set(0, 0, 0)
+    scene.scale.set(1, 1, 1)
+    scene.updateMatrixWorld(true)
+
     const box    = new THREE.Box3().setFromObject(scene)
     const centre = box.getCenter(new THREE.Vector3())
     const size   = box.getSize(new THREE.Vector3())
     scene.position.set(-centre.x, -centre.y, -centre.z)
     scene.scale.setScalar(1.8 / Math.max(size.x, size.y, size.z))
+    scene.updateMatrixWorld(true)
   }, [scene])
 
   useEffect(() => {
@@ -164,8 +160,7 @@ function CirculatoryModel({ onSelect, selectedOrganId, isDragging, isSpinning })
 export default function CirculatorySimulation({ system }) {
   const { currentOrgan, setCurrentOrgan } = useAppStore()
   const isDragging   = useRef(false)
-  const zoomTimerRef = useRef(null)
-  const [zoomAction, setZoomAction] = useState(null)
+  const [zoomCommand, setZoomCommand] = useState(null)
 
   const selectedOrganId = currentOrgan?.id ?? null
 
@@ -179,13 +174,7 @@ export default function CirculatorySimulation({ system }) {
   const handlePointerUp   = useCallback(() => { isDragging.current = false }, [])
 
   const triggerZoom = useCallback((direction) => {
-    setZoomAction(direction)
-    if (zoomTimerRef.current) clearTimeout(zoomTimerRef.current)
-    zoomTimerRef.current = setTimeout(() => setZoomAction(null), 50)
-  }, [])
-
-  useEffect(() => {
-    return () => { if (zoomTimerRef.current) clearTimeout(zoomTimerRef.current) }
+    setZoomCommand({ direction, id: performance.now() })
   }, [])
 
   return (
@@ -218,14 +207,14 @@ export default function CirculatorySimulation({ system }) {
         <directionalLight position={[-3, 1, -2]} intensity={1.2} color="#e8f5ff" />
         <directionalLight position={[0, -3, -2]} intensity={0.6} color="#ffffff" />
         <Environment preset="sunset" environmentIntensity={0.5} />
-        <CameraZoom zoomAction={zoomAction} />
+        <SmoothCameraZoom command={zoomCommand} minDistance={0.28} maxDistance={8} zoomFactor={0.62} />
         <CirculatoryModel
           onSelect={handleSelect}
           selectedOrganId={selectedOrganId}
           isDragging={isDragging}
           isSpinning={true}
         />
-        <OrbitControls enablePan={false} minDistance={0.5} maxDistance={8} target={[0, 0, 0]} />
+        <OrbitControls enablePan={false} enableDamping dampingFactor={0.08} minDistance={0.28} maxDistance={8} target={[0, 0, 0]} />
       </Canvas>
     </div>
   )

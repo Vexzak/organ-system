@@ -1,8 +1,9 @@
-import { useRef, useEffect, useState, useCallback } from "react"
-import { Canvas, useFrame, useThree } from "@react-three/fiber"
+import { useRef, useEffect, useLayoutEffect, useState, useCallback } from "react"
+import { Canvas, useFrame } from "@react-three/fiber"
 import { useGLTF, OrbitControls, Environment } from "@react-three/drei"
 import * as THREE from "three"
 import useAppStore from "../store/useAppStore"
+import SmoothCameraZoom from "./SmoothCameraZoom"
 
 const BONE_TO_ORGAN_ID = {
   Skull:      "skull",
@@ -21,28 +22,23 @@ function findBoneName(object) {
   return null
 }
 
-function CameraZoom({ zoomAction }) {
-  const { camera } = useThree()
-  useEffect(() => {
-    if (!zoomAction) return
-    const nextZoom = zoomAction === "in" ? camera.zoom * 10 : camera.zoom / 10
-    camera.zoom = Math.min(25, Math.max(0.2, nextZoom))
-    camera.updateProjectionMatrix()
-  }, [zoomAction, camera])
-  return null
-}
-
 function SkeletalModel({ onSelect, selectedBone, isSpinning }) {
   const MODEL_SCALE = 1.45
   const { scene } = useGLTF("https://ronvremnakncnmiphjkg.supabase.co/storage/v1/object/public/glb-files/skeletal_system.glb")
   const materialsRef = useRef({})
   const groupRef = useRef()
 
-  useEffect(() => {
+  useLayoutEffect(() => {
+    scene.position.set(0, 0, 0)
+    scene.rotation.set(0, 0, 0)
+    scene.scale.set(1, 1, 1)
+    scene.updateMatrixWorld(true)
+
     const box = new THREE.Box3().setFromObject(scene)
     const center = new THREE.Vector3()
     box.getCenter(center)
     scene.position.set(-center.x, -center.y, -center.z)
+    scene.updateMatrixWorld(true)
   }, [scene])
 
   useEffect(() => {
@@ -148,19 +144,10 @@ function SkeletalModel({ onSelect, selectedBone, isSpinning }) {
 export default function SkeletalSimulation({ system }) {
   const { currentOrgan, setCurrentOrgan } = useAppStore()
   const [isSpinning] = useState(true)
-  const [zoomAction, setZoomAction] = useState(null)
-  const zoomTimerRef = useRef(null)
+  const [zoomCommand, setZoomCommand] = useState(null)
 
   const triggerZoom = useCallback((direction) => {
-    setZoomAction(direction)
-    if (zoomTimerRef.current) clearTimeout(zoomTimerRef.current)
-    zoomTimerRef.current = setTimeout(() => setZoomAction(null), 50)
-  }, [])
-
-  useEffect(() => {
-    return () => {
-      if (zoomTimerRef.current) clearTimeout(zoomTimerRef.current)
-    }
+    setZoomCommand({ direction, id: performance.now() })
   }, [])
 
   const selectedBone = currentOrgan
@@ -204,7 +191,7 @@ export default function SkeletalSimulation({ system }) {
       <Canvas
         shadows
         gl={{ alpha: true, antialias: true }}
-        camera={{ position: [0, 0, 3.3], fov: 45 }}
+        camera={{ position: [0, 0, 2.35], fov: 45 }}
         style={{ width: "100%", height: "100%", background: "transparent" }}
       >
         {/* Soft ambient — much lower so shadows are visible */}
@@ -238,7 +225,7 @@ export default function SkeletalSimulation({ system }) {
 
         <Environment preset="dawn" environmentIntensity={0.3} />
 
-        <CameraZoom zoomAction={zoomAction} />
+        <SmoothCameraZoom command={zoomCommand} minDistance={0.45} maxDistance={7} zoomFactor={0.62} />
 
         <SkeletalModel
           onSelect={handleSelect}
@@ -247,8 +234,10 @@ export default function SkeletalSimulation({ system }) {
         />
         <OrbitControls
           enablePan={false}
-          minDistance={2.0}
-          maxDistance={10}
+          enableDamping
+          dampingFactor={0.08}
+          minDistance={0.45}
+          maxDistance={7}
           target={[0, 0, 0]}
         />
       </Canvas>

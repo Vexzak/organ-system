@@ -47,6 +47,67 @@ function PlayIcon() {
   )
 }
 
+function SystemSpeakerButton({ systemId, label }) {
+  const mp3BySystemId = {
+    digestive: '/digestive_system.mp3',
+    circulatory: '/circulatory_system.mp3',
+    skeletal: '/skeletal_system.mp3',
+    muscular: '/muscular_system.mp3',
+    respiratory: '/respiratory_system.mp3',
+  }
+
+  const src = mp3BySystemId[systemId]
+
+  return (
+    <button
+      type="button"
+      aria-label={label}
+      onClick={(e) => {
+        e.preventDefault()
+        e.stopPropagation()
+
+        if (!src) return
+        try {
+          const audio = new Audio(src)
+          audio.play().catch(() => {})
+        } catch {}
+      }}
+      className="shrink-0 inline-flex items-center justify-center"
+      style={{
+        width: 34,
+        height: 34,
+        borderRadius: 12,
+        background: 'rgba(219,234,254,0.65)',
+        border: '1px solid rgba(147,197,253,0.4)',
+        boxShadow: '0 1px 6px rgba(0,0,0,0.03)',
+        color: '#3b82f6',
+        cursor: 'pointer',
+      }}
+    >
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path
+          d="M11 5L6.5 9H3v6h3.5L11 19V5Z"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinejoin="round"
+        />
+        <path
+          d="M15.54 8.46a5 5 0 0 1 0 7.07"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+        />
+        <path
+          d="M18.36 5.64a9 9 0 0 1 0 12.72"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+        />
+      </svg>
+    </button>
+  )
+}
+
 export default function SimulationPage() {
   const { systemId } = useParams()
   const navigate = useNavigate()
@@ -81,7 +142,7 @@ export default function SimulationPage() {
 
   return (
     <div
-      className="min-h-screen flex flex-col overflow-hidden"
+      className="h-screen flex flex-col overflow-hidden"
       style={{ background: '#eaf3fb' }}
     >
       {/* Background blobs */}
@@ -106,14 +167,14 @@ export default function SimulationPage() {
         zIndex: 0,
       }} />
 
-      <div className="relative z-10 flex flex-col flex-1 overflow-hidden">
+      <div className="relative z-10 flex flex-col flex-1 min-h-0 overflow-hidden">
         <Navbar title={system.name} showBack onBack={() => navigate(`/system/${system.id}`)} />
 
-        <div className="flex-1 flex overflow-hidden">
+        <div className="flex-1 min-h-0 flex overflow-hidden">
 
           {/* LEFT: Canvas panel */}
           <div
-            className="flex-1 relative flex flex-col overflow-hidden"
+            className="flex-1 min-h-0 relative flex flex-col overflow-hidden"
             style={{
               minWidth: 0,
               background: 'radial-gradient(ellipse 80% 70% at 50% 40%, #c8e8f8 0%, #daeef8 40%, #eaf4fb 100%)',
@@ -150,16 +211,21 @@ export default function SimulationPage() {
               }} />
             </div>
 
-            <div className="flex-1 flex items-center justify-center overflow-hidden relative z-10">
+            <div className="flex-1 min-h-0 flex items-center justify-center overflow-hidden relative z-10">
               <Suspense fallback={<CanvasLoader />}>
-                <SimComponent key={systemId} system={system} selectedOrgan={currentOrgan} canvasKey={systemId} />
+                <SimComponent
+                  key={systemId}
+                  system={system}
+                  selectedOrgan={currentOrgan}
+                  canvasKey={systemId}
+                />
               </Suspense>
             </div>
           </div>
 
           {/* RIGHT: Info panel */}
           <div
-            className="flex flex-col overflow-hidden"
+            className="flex flex-col min-h-0 overflow-hidden"
             style={{
               width: '50%',
               flexShrink: 0,
@@ -169,7 +235,7 @@ export default function SimulationPage() {
             }}
           >
             {/* System badge */}
-            <div className="px-6 pt-5 pb-0">
+            <div className="px-6 pt-5 pb-0 shrink-0">
               <div
                 className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest"
                 style={{
@@ -179,13 +245,19 @@ export default function SimulationPage() {
                 }}
               >
                 <span style={{ fontSize: 14 }}>{system.icon}</span>
-                {system.name}
+                <span className="flex items-center gap-2">
+                  {system.name}
+                  <SystemSpeakerButton
+                    systemId={system.id}
+                    label={`Play ${system.name} audio`}
+                  />
+                </span>
               </div>
             </div>
 
             {/* Active organ card */}
             {currentOrgan ? (
-              <div className="px-6 pt-4 pb-5">
+              <div className="px-6 pt-4 pb-5 shrink-0">
                 <div
                   style={{
                     background: '#ffffff',
@@ -228,7 +300,7 @@ export default function SimulationPage() {
                           letterSpacing: '0.04em',
                         }}
                       >
-                        Video Canvas
+                        
                       </span>
                     </div>
 
@@ -252,7 +324,7 @@ export default function SimulationPage() {
                 </div>
               </div>
             ) : (
-              <div className="px-6 pt-4 pb-5">
+              <div className="px-6 pt-4 pb-5 shrink-0">
                 <div
                   style={{
                     background: '#ffffff',
@@ -268,15 +340,17 @@ export default function SimulationPage() {
               </div>
             )}
 
-            {/* Organs list */}
-            <div className="flex-1 px-6 pb-6 flex flex-col min-h-0">
+            {/* Organs list (scroll only here) */}
+            <div className="flex-1 min-h-0 px-6 pb-6 flex flex-col">
               <div
                 className="text-xs font-bold uppercase tracking-widest mb-3"
                 style={{ color: '#94a3b8', letterSpacing: '0.12em' }}
               >
                 Organs
               </div>
-              <div className="flex-1 overflow-y-auto pr-1" style={{ minHeight: 0 }}>
+              <div
+                className="flex-1 min-h-0 overflow-y-auto pr-1"
+              >
                 <OrganList
                   organs={system.organs}
                   accentColor={system.accentColor}

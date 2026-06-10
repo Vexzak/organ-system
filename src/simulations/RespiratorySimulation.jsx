@@ -1,8 +1,9 @@
-import { useRef, useEffect, useState, useCallback } from "react"
-import { Canvas, useFrame, useThree } from "@react-three/fiber"
+import { useRef, useEffect, useLayoutEffect, useState, useCallback } from "react"
+import { Canvas, useFrame } from "@react-three/fiber"
 import { useGLTF, OrbitControls, Environment, useAnimations } from "@react-three/drei"
 import * as THREE from "three"
 import useAppStore from "../store/useAppStore"
+import SmoothCameraZoom from "./SmoothCameraZoom"
 
 const MESH_TO_ORGAN_ID = {
   Body_L_13:  "body",
@@ -30,17 +31,6 @@ function findOrganName(object) {
   return null
 }
 
-function CameraZoom({ zoomAction }) {
-  const { camera } = useThree()
-  useEffect(() => {
-    if (!zoomAction) return
-    const nextZoom = zoomAction === "in" ? camera.zoom * 10 : camera.zoom / 10
-    camera.zoom = Math.min(25, Math.max(0.2, nextZoom))
-    camera.updateProjectionMatrix()
-  }, [zoomAction, camera])
-  return null
-}
-
 function RespiratoryModel({ onSelect, selectedOrgan, isSpinning }) {
   const { scene, animations } = useGLTF("https://ronvremnakncnmiphjkg.supabase.co/storage/v1/object/public/glb-files/respiratory_system.glb")
   const originalColorsRef = useRef({})
@@ -58,7 +48,12 @@ function RespiratoryModel({ onSelect, selectedOrgan, isSpinning }) {
     })
   }, [actions])
 
-  useEffect(() => {
+  useLayoutEffect(() => {
+    scene.position.set(0, 0, 0)
+    scene.rotation.set(0, 0, 0)
+    scene.scale.set(1, 1, 1)
+    scene.updateMatrixWorld(true)
+
     const box = new THREE.Box3().setFromObject(scene)
     const center = new THREE.Vector3()
     const size = new THREE.Vector3()
@@ -70,6 +65,7 @@ function RespiratoryModel({ onSelect, selectedOrgan, isSpinning }) {
     const center2 = new THREE.Vector3()
     box2.getCenter(center2)
     scene.position.set(-center2.x, -center2.y, -center2.z)
+    scene.updateMatrixWorld(true)
   }, [scene])
 
   useEffect(() => {
@@ -219,8 +215,7 @@ export default function RespiratorySimulation({ system }) {
   const { currentOrgan, setCurrentOrgan } = useAppStore()
   const [isSpinning, setIsSpinning] = useState(true)
   const spinResumeTimerRef = useRef(null)
-  const [zoomAction, setZoomAction] = useState(null)
-  const zoomTimerRef = useRef(null)
+  const [zoomCommand, setZoomCommand] = useState(null)
 
   const handleOrbitStart = useCallback(() => {
     setIsSpinning(false)
@@ -235,15 +230,12 @@ export default function RespiratorySimulation({ system }) {
   const triggerZoom = useCallback((direction) => {
     setIsSpinning(false)
     if (spinResumeTimerRef.current) clearTimeout(spinResumeTimerRef.current)
-    setZoomAction(direction)
-    if (zoomTimerRef.current) clearTimeout(zoomTimerRef.current)
-    zoomTimerRef.current = setTimeout(() => setZoomAction(null), 50)
+    setZoomCommand({ direction, id: performance.now() })
     spinResumeTimerRef.current = setTimeout(() => setIsSpinning(true), 1500)
   }, [])
 
   useEffect(() => {
     return () => {
-      if (zoomTimerRef.current) clearTimeout(zoomTimerRef.current)
       if (spinResumeTimerRef.current) clearTimeout(spinResumeTimerRef.current)
     }
   }, [])
@@ -290,9 +282,9 @@ export default function RespiratorySimulation({ system }) {
         <directionalLight position={[4, 2, -5]} intensity={0.5} color="#e8f5ff" />
         <pointLight position={[0, -3, 2]} intensity={0.5} color="#ffffff" />
         <Environment preset="sunset" environmentIntensity={0.5} />
-        <CameraZoom zoomAction={zoomAction} />
+        <SmoothCameraZoom command={zoomCommand} minDistance={0.32} maxDistance={8} zoomFactor={0.62} />
         <RespiratoryModel onSelect={handleSelect} selectedOrgan={selectedOrgan} isSpinning={isSpinning} />
-        <OrbitControls enablePan={false} minDistance={1.5} maxDistance={8} target={[0, 0, 0]}
+        <OrbitControls enablePan={false} enableDamping dampingFactor={0.08} minDistance={0.32} maxDistance={8} target={[0, 0, 0]}
           onStart={handleOrbitStart} onEnd={handleOrbitEnd}
         />
       </Canvas>
