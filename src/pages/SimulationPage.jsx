@@ -15,6 +15,9 @@ const simulations = {
   respiratory: lazy(() => import('../simulations/RespiratorySimulation')),
 }
 
+// Systems that have organ videos available
+const SYSTEMS_WITH_VIDEO = ['respiratory']
+
 function CanvasLoader() {
   return (
     <div className="w-full h-full flex items-center justify-center">
@@ -26,23 +29,73 @@ function CanvasLoader() {
   )
 }
 
-function PlayIcon() {
+function OrganVideo({ systemId, organId }) {
+  const hasVideo = SYSTEMS_WITH_VIDEO.includes(systemId)
+  if (!hasVideo) return null
+
   return (
     <div
       style={{
-        width: 52,
-        height: 52,
-        borderRadius: '50%',
-        background: 'rgba(255,255,255,0.85)',
+        width: '55%',
+        minHeight: 260,
+        borderRadius: 14,
+        flexShrink: 0,
+        background: 'linear-gradient(160deg, #c8d8e4 0%, #b8ccda 100%)',
+        overflow: 'hidden',
+        border: '1px solid rgba(170,200,220,0.4)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        boxShadow: '0 2px 12px rgba(0,0,0,0.13)',
       }}
     >
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-        <path d="M8 5.5L19 12L8 18.5V5.5Z" fill="#94a3b8" />
+      <video
+        key={`${systemId}-${organId}`}
+        src={`/${systemId}/${organId}.mp4`}
+        autoPlay
+        loop
+        muted
+        playsInline
+        style={{
+          width: '100%',
+          height: '100%',
+          objectFit: 'cover',
+          borderRadius: 14,
+          display: 'block',
+        }}
+        onError={(e) => {
+          // Hide video and show fallback placeholder if file doesn't exist
+          e.target.style.display = 'none'
+          e.target.parentElement.style.background = 'linear-gradient(160deg, #c8d8e4 0%, #b8ccda 100%)'
+        }}
+      />
+    </div>
+  )
+}
+
+function NoVideoPlaceholder() {
+  return (
+    <div
+      style={{
+        width: '55%',
+        minHeight: 260,
+        borderRadius: 14,
+        flexShrink: 0,
+        background: 'linear-gradient(160deg, #c8d8e4 0%, #b8ccda 100%)',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: 10,
+        border: '1px solid rgba(170,200,220,0.4)',
+      }}
+    >
+      <svg width="36" height="36" viewBox="0 0 24 24" fill="none">
+        <rect x="2" y="5" width="20" height="14" rx="3" stroke="#94a3b8" strokeWidth="1.5" />
+        <path d="M10 9.5L15 12L10 14.5V9.5Z" fill="#94a3b8" />
       </svg>
+      <span style={{ fontSize: 12, color: '#94a3b8', fontWeight: 500 }}>
+        No video available
+      </span>
     </div>
   )
 }
@@ -65,7 +118,6 @@ function SystemSpeakerButton({ systemId, label }) {
       onClick={(e) => {
         e.preventDefault()
         e.stopPropagation()
-
         if (!src) return
         try {
           const audio = new Audio(src)
@@ -139,6 +191,8 @@ export default function SimulationPage() {
   }, [systemId])
 
   if (!system || !SimComponent) return null
+
+  const hasVideo = SYSTEMS_WITH_VIDEO.includes(systemId)
 
   return (
     <div
@@ -276,33 +330,11 @@ export default function SimulationPage() {
                   </div>
 
                   <div className="flex gap-5 items-stretch">
-                    <div
-                      style={{
-                        width: '55%',
-                        minHeight: 260,
-                        borderRadius: 14,
-                        flexShrink: 0,
-                        background: 'linear-gradient(160deg, #c8d8e4 0%, #b8ccda 100%)',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        gap: 12,
-                        border: '1px solid rgba(170,200,220,0.4)',
-                      }}
-                    >
-                      <PlayIcon />
-                      <span
-                        style={{
-                          fontSize: 12.5,
-                          color: '#7a9ab0',
-                          fontWeight: 600,
-                          letterSpacing: '0.04em',
-                        }}
-                      >
-                        
-                      </span>
-                    </div>
+                    {/* Video or placeholder depending on system */}
+                    {hasVideo
+                      ? <OrganVideo systemId={systemId} organId={currentOrgan.id} />
+                      : <NoVideoPlaceholder />
+                    }
 
                     <div className="flex-1 min-w-0 flex flex-col justify-center">
                       <h2
@@ -348,9 +380,7 @@ export default function SimulationPage() {
               >
                 Organs
               </div>
-              <div
-                className="flex-1 min-h-0 overflow-y-auto pr-1"
-              >
+              <div className="flex-1 min-h-0 overflow-y-auto pr-1">
                 <OrganList
                   organs={system.organs}
                   accentColor={system.accentColor}
