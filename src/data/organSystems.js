@@ -37,9 +37,9 @@ export const organSystems = [
     cardBg: 'from-pink-100/40 to-pink-50/30',
     borderColor: 'border-pink-300/60',
     organs: [
-      { id: 'heart',         name: 'Heart',         description: 'A powerful muscular pump that beats 100,000 times per day, circulating about 5 liters of blood every minute.' },
-      { id: 'blood_vessels', name: 'Blood Vessels', description: 'A network of arteries, veins, and capillaries stretching over 100,000 km that transport blood throughout the body.' },
-      { id: 'blood',         name: 'Blood',         description: 'The body\'s fluid transport medium, carrying oxygen, nutrients, hormones, and immune cells to all tissues.' },
+      { id: 'heart',         name: 'Heart',         description: 'Pumps blood to all parts of the body.' },
+      { id: 'blood_vessels', name: 'Blood Vessels', description: 'Tubes that transport blood throughout the body.' },
+      { id: 'blood',         name: 'Blood',         description: 'it carries oxygen and nutrients to different parts of the body.' },
     ],
   },
   {
@@ -55,11 +55,11 @@ export const organSystems = [
     cardBg: 'from-teal-100/40 to-teal-50/30',
     borderColor: 'border-teal-300/60',
     organs: [
-      { id: 'skull',      name: 'Skull',      description: 'A protective casing of 22 fused bones that encases and safeguards the brain from impact and injury.' },
-      { id: 'spine',      name: 'Spine',      description: '33 vertebrae stacked in a flexible column that supports the body\'s weight and protects the spinal cord.' },
-      { id: 'rib_cage',   name: 'Rib Cage',   description: '24 ribs forming a protective cage around the heart, lungs, and major blood vessels.' },
-      { id: 'hand_bones', name: 'Hand Bones', description: '27 bones per hand — carpals, metacarpals, and phalanges — enabling precise grip and movement.' },
-      { id: 'leg_bones',  name: 'Leg Bones',  description: 'The femur (thigh), tibia, fibula, and foot bones support body weight and enable walking, running, and jumping.' },
+      { id: 'skull',      name: 'Skull',      description: 'It protects the brain from injuries.' },
+      { id: 'spine',      name: 'Spine',      description: 'It allows the body to bend and move.' },
+      { id: 'rib_cage',   name: 'Rib Cage',   description: 'It Protects the heart and lungs.' },
+      { id: 'hand_bones', name: 'Hand Bones', description: 'Allows the body to hold, grasp, and use objects.' },
+      { id: 'leg_bones',  name: 'Leg Bones',  description: 'Support body weight and help the body move.' },
     ],
   },
   {
@@ -75,12 +75,12 @@ export const organSystems = [
     cardBg: 'from-violet-100/40 to-violet-50/30',
     borderColor: 'border-violet-300/60',
     organs: [
-      { id: 'biceps',          name: 'Biceps',         description: 'Two-headed muscles on the front of the upper arm responsible for bending the elbow and rotating the forearm.' },
-      { id: 'abdominals',      name: 'Abdominals',     description: 'Core muscles in the abdomen that stabilize the trunk, support posture, and protect internal organs.' },
-      { id: 'quadriceps',      name: 'Quadriceps',     description: 'Four large muscles at the front of the thigh that extend the knee and are essential for walking and running.' },
-      { id: 'facial_muscles',  name: 'Facial Muscles', description: 'Over 40 muscles that control facial expressions — smiling, frowning, blinking, and speaking.' },
-      { id: 'deltoid',         name: 'Deltoid',        description: 'The rounded shoulder muscle responsible for lifting the arm to the front, side, and behind.' },
-      { id: 'pectorals',       name: 'Pectorals',      description: 'Chest muscles that control arm movement across the body and are important for pushing motions.' },
+      { id: 'biceps',          name: 'Biceps',         description: 'It is the muscles in the front of the upper arm that help you bend your arm and lift objects.' },
+      { id: 'abdominals',      name: 'Abdominals',     description: 'It is the muscles in the stomach area that help you protect important internal organs like the stomach and intestines.' },
+      { id: 'quadriceps',      name: 'Quadriceps',     description: 'It is the muscles in the front of the upper leg that help you walk, run, jump, and straighten your leg.' },
+      { id: 'facial_muscles',  name: 'Facial Muscles', description: 'It is the muscles in the face that help you make facial expressions such as smiling, frowning, and blinking.' },
+      { id: 'deltoid',         name: 'Deltoid',        description: 'It is the muscles in the shoulder that help you move your arm in different directions and to keep you safe when you carry things.' },
+      { id: 'pectorals',       name: 'Pectorals',      description: 'It is the muscles in the chest that help you move your arms and shoulders.' },
     ],
   },
   {

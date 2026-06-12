@@ -16,7 +16,7 @@ const simulations = {
 }
 
 // Systems that have organ videos available
-const SYSTEMS_WITH_VIDEO = ['respiratory']
+const SYSTEMS_WITH_VIDEO = ['respiratory', 'muscular', 'skeletal', 'circulatory']
 
 function CanvasLoader() {
   return (
