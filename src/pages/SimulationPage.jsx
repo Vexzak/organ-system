@@ -29,10 +29,7 @@ function CanvasLoader() {
   )
 }
 
-function OrganVideo({ systemId, organId }) {
-  const hasVideo = SYSTEMS_WITH_VIDEO.includes(systemId)
-  if (!hasVideo) return null
-
+function OrganVideo({ src, systemId, organId }) {
   return (
     <div
       style={{
@@ -50,7 +47,7 @@ function OrganVideo({ systemId, organId }) {
     >
       <video
         key={`${systemId}-${organId}`}
-        src={`/${systemId}/${organId}.mp4`}
+        src={src}
         autoPlay
         loop
         muted
@@ -63,7 +60,6 @@ function OrganVideo({ systemId, organId }) {
           display: 'block',
         }}
         onError={(e) => {
-          // Hide video and show fallback placeholder if file doesn't exist
           e.target.style.display = 'none'
           e.target.parentElement.style.background = 'linear-gradient(160deg, #c8d8e4 0%, #b8ccda 100%)'
         }}
@@ -332,7 +328,7 @@ export default function SimulationPage() {
                   <div className="flex gap-5 items-stretch">
                     {/* Video or placeholder depending on system */}
                     {hasVideo
-                      ? <OrganVideo systemId={systemId} organId={currentOrgan.id} />
+                      ? <OrganVideo src={currentOrgan.video} systemId={systemId} organId={currentOrgan.id} />
                       : <NoVideoPlaceholder />
                     }
 
