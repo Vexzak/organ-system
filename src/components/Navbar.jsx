@@ -117,7 +117,7 @@ export default function Navbar({ showBack = false, onBack }) {
 
   return (
     <nav
-      className="flex items-center justify-center h-16 px-6 sticky top-0 z-50 relative"
+      className="flex items-center justify-center h-16 px-6 sticky top-0 z-50 relative whitespace-nowrap flex-nowrap"
       style={{
         background: 'rgba(255,255,255,0.88)',
         borderBottom: '1px solid rgba(186,224,255,0.45)',
@@ -126,7 +126,7 @@ export default function Navbar({ showBack = false, onBack }) {
       }}
     >
       {!isHome && (
-        <div className="absolute left-6 flex items-center gap-3">
+        <div className="absolute left-6 flex items-center gap-3 flex-nowrap">
           {showBack && (
             <button
               onClick={handleBack}
@@ -151,7 +151,7 @@ export default function Navbar({ showBack = false, onBack }) {
       )}
 
       {/* Centered logo + title */}
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2 flex-nowrap min-w-0">
         {/* Hexagon with filled vector heart, heart shifted down to true center */}
         <svg width="34" height="34" viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg">
           {/* Hexagon outline — larger, centered on 17,17 */}
@@ -172,13 +172,13 @@ export default function Navbar({ showBack = false, onBack }) {
             strokeLinejoin="round"
           />
         </svg>
-        <span className="font-bold tracking-wide" style={{ color: '#1e3a5f', fontSize: '1rem' }}>
+        <span className="font-bold tracking-wide whitespace-nowrap" style={{ color: '#1e3a5f', fontSize: '1rem' }}>
           Organ Systems
         </span>
       </div>
 
       {/* Right — dropdown */}
-      <div className="absolute right-6 flex items-center">
+      <div className="absolute right-6 flex items-center flex-nowrap min-w-0">
         <SystemDropdown systemId={systemId} />
       </div>
     </nav>

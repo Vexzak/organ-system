@@ -211,10 +211,44 @@ export default function SimulationPage() {
         zIndex: 0,
       }} />
 
-      <div className="relative z-10 flex flex-col flex-1 min-h-0 overflow-hidden">
+      {/* Portrait warning (UI is designed for landscape) */}
+      <div
+        className="hidden portrait:block fixed inset-0 z-[60] bg-[#eaf3fb]"
+        style={{
+          background:
+            'radial-gradient(ellipse 70% 70% at 50% 30%, rgba(147,210,255,0.55) 0%, rgba(234,243,251,1) 55%, #eaf3fb 100%)',
+        }}
+      >
+        <div className="h-full flex items-center justify-center px-6 text-center">
+          <div className="max-w-md">
+            <div className="mx-auto w-16 h-16 rounded-2xl flex items-center justify-center" style={{
+              background: 'rgba(219,234,254,0.8)',
+              border: '1px solid rgba(147,197,253,0.5)',
+              boxShadow: '0 8px 32px rgba(96,165,250,0.15)'
+            }}>
+              <svg width="34" height="34" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M7 7h10v10H7z" stroke="#3b82f6" strokeWidth="1.8" />
+                <path d="M12 3v3M12 18v3M3 12h3M18 12h3" stroke="#3b82f6" strokeWidth="1.8" strokeLinecap="round" />
+              </svg>
+            </div>
+            <h2 className="mt-5 font-black text-2xl" style={{ color: '#1a2e4a' }}>
+              Please rotate your device
+            </h2>
+            <p className="mt-3 text-base leading-relaxed" style={{ color: '#5a7a96' }}>
+              This experience is optimized for landscape orientation.
+            </p>
+          </div>
+        </div>
+      </div>
+
+
+      <div className="relative z-10 flex flex-col flex-1 min-h-0 overflow-hidden portrait:hidden">
+        {/* Portrait overlay already displayed above */}
         <Navbar title={system.name} showBack onBack={() => navigate(`/system/${system.id}`)} />
 
-        <div className="flex-1 min-h-0 flex overflow-hidden">
+        <div className="flex-1 min-h-0 flex overflow-hidden flex-nowrap">
+
+
 
           {/* LEFT: Canvas panel */}
           <div

@@ -1,0 +1,12 @@
+/* Portrait-mode helper for the app (UI is optimized for landscape). */
+
+@media (orientation: portrait) {
+  .portrait\:hidden { display: none !important; }
+  .portrait\:block { display: block !important; }
+}
+
+@media (orientation: landscape) {
+  .portrait\:hidden { display: inherit !important; }
+  .portrait\:block { display: none !important; }
+}
+

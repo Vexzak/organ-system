@@ -1,6 +1,9 @@
-- [ ] Add speaker icon and audio playback for each organ system title on SystemPage right info panel
-- [ ] Map system ids to mp3 filenames in public folder (e.g., skeletal_system.mp3)
-- [ ] Use HTMLAudioElement to play/pause on click, with graceful fallback if mp3 missing
-- [ ] Ensure icon is accessible (button, aria-label)
-- [ ] Run project build/lint (if available) to verify no errors
+# TODO
+
+- [ ] Add portrait-mode overlay (please rotate your device) to SimulationPage and/or global CSS using orientation: portrait.
+- [ ] Enforce SimulationPage two-column layout at all breakpoints; prevent vertical overflow bugs and keep right panel independently scrollable.
+- [ ] Update Navbar to never wrap to two lines (flex-nowrap + whitespace-nowrap/min-w).
+- [ ] Verify OrganList stays 2-column grid with safe overflow on small landscape.
+- [ ] Ensure HomePage and SystemPage are fully responsive on mobile landscape/tablet/desktop (className-only).
+- [ ] Build and run sanity checks (npm run build / dev) and verify portrait overlay behavior.
 
