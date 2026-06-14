@@ -11,12 +11,12 @@ export const organSystems = [
     cardBg: 'from-orange-100/40 to-orange-50/30',
     borderColor: 'border-orange-300/60',
     organs: [
-      { id: 'mouth',           name: 'Mouth',           video: null, description: 'Chews food and breaks it down using teeth and saliva. The first step in the digestive process.' },
-      { id: 'esophagus',       name: 'Esophagus',       video: null, description: 'A muscular tube that moves food from the mouth to the stomach using wave-like contractions.' },
-      { id: 'stomach',         name: 'Stomach',         video: null, description: 'Churns food and mixes it with gastric acid and enzymes to form a semi-liquid paste called chyme.' },
-      { id: 'small_intestine', name: 'Small Intestine', video: null, description: 'The primary site of nutrient absorption. Over 6 meters long, lined with tiny villi that absorb nutrients.' },
-      { id: 'large_intestine', name: 'Large Intestine', video: null, description: 'Absorbs water and electrolytes from remaining indigestible food matter and compacts waste.' },
-      { id: 'anus',            name: 'Anus',            video: null, description: 'The opening at the end of the digestive tract through which waste material leaves the body.' },
+      { id: 'mouth',           name: 'Mouth',           video: 'https://res.cloudinary.com/drnwruun0/video/upload/f_auto,q_auto/mouth_xygcm5.mp4',           description: 'Chews food and breaks it down using teeth and saliva. The first step in the digestive process.' },
+      { id: 'esophagus',       name: 'Esophagus',       video: 'https://res.cloudinary.com/drnwruun0/video/upload/f_auto,q_auto/esophagus_pxjybf.mp4',       description: 'A muscular tube that moves food from the mouth to the stomach using wave-like contractions.' },
+      { id: 'stomach',         name: 'Stomach',         video: 'https://res.cloudinary.com/drnwruun0/video/upload/f_auto,q_auto/stomach_kuant3.mp4',         description: 'Churns food and mixes it with gastric acid and enzymes to form a semi-liquid paste called chyme.' },
+      { id: 'small_intestine', name: 'Small Intestine', video: 'https://res.cloudinary.com/drnwruun0/video/upload/f_auto,q_auto/small_intestine_lmi92p.mp4', description: 'The primary site of nutrient absorption. Over 6 meters long, lined with tiny villi that absorb nutrients.' },
+      { id: 'large_intestine', name: 'Large Intestine', video: 'https://res.cloudinary.com/drnwruun0/video/upload/f_auto,q_auto/large_intestine_ojlx1o.mp4', description: 'Absorbs water and electrolytes from remaining indigestible food matter and compacts waste.' },
+      { id: 'anus',            name: 'Anus',            video: 'https://res.cloudinary.com/drnwruun0/video/upload/f_auto,q_auto/anus_v2fat3.mp4',            description: 'The opening at the end of the digestive tract through which waste material leaves the body.' },
     ],
   },
   {
