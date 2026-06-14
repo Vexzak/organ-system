@@ -171,7 +171,7 @@ export default function SimulationPage() {
       muscular:    "/muscular_system.glb",
       skeletal:    "/skeletal_system.glb",
       circulatory: "/circulatory_system.glb",
-      digestive:   "/digestive_system.glb",
+      digestive:   "/digestive_final.glb",
       respiratory: "/respiratory_system.glb",
     }
     if (glbMap[systemId]) useGLTF.clear(glbMap[systemId])
