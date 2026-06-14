@@ -4,6 +4,7 @@ import { useGLTF, OrbitControls, Environment, useAnimations } from "@react-three
 import * as THREE from "three"
 import useAppStore from "../store/useAppStore"
 import SmoothCameraZoom from "./SmoothCameraZoom"
+import { speakOrgan } from '../hooks/useOrganSpeech'
 
 const MESH_TO_ORGAN_ID = {
   heart_v2:              'heart',
@@ -167,7 +168,10 @@ export default function CirculatorySimulation({ system }) {
   const handleSelect = (organId) => {
     if (!organId || !system) return
     const organ = system.organs.find((o) => o.id === organId)
-    if (organ) setCurrentOrgan(organ)
+    if (organ) {
+      setCurrentOrgan(organ)
+      speakOrgan(organ)
+    }
   }
 
   const handlePointerDown = useCallback(() => { isDragging.current = true }, [])

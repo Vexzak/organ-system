@@ -4,6 +4,7 @@ import { useGLTF, OrbitControls, Environment } from "@react-three/drei"
 import * as THREE from "three"
 import useAppStore from "../store/useAppStore"
 import SmoothCameraZoom from "./SmoothCameraZoom"
+import { speakOrgan } from '../hooks/useOrganSpeech'
 
 const MESH_TO_ORGAN_ID = {
   abdominals:     "abdominals",
@@ -143,7 +144,10 @@ export default function MuscularSimulation({ system }) {
     const organId = MESH_TO_ORGAN_ID[meshName]
     if (!organId || !system) return
     const organ = system.organs.find((o) => o.id === organId)
-    if (organ) setCurrentOrgan(organ)
+    if (organ) {
+      setCurrentOrgan(organ)
+      speakOrgan(organ)
+    }
   }
 
   return (

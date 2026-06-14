@@ -1,4 +1,5 @@
 import useAppStore from '../store/useAppStore'
+import { speakOrgan } from '../hooks/useOrganSpeech'
 
 function organIconSVG(id, color) {
   const stroke = color || '#3b82f6'
@@ -23,16 +24,19 @@ export default function OrganList({ organs }) {
   const currentOrgan    = useAppStore((s) => s.currentOrgan)
   const setCurrentOrgan = useAppStore((s) => s.setCurrentOrgan)
 
+  function handleOrganClick(organ) {
+    setCurrentOrgan(organ)
+    speakOrgan(organ)
+  }
+
   return (
-    <div
-      className="grid grid-cols-2 gap-3 pr-1"
-    >
+    <div className="grid grid-cols-2 gap-3 pr-1">
       {organs.map((organ, i) => {
         const isActive = currentOrgan?.id === organ.id
         return (
           <button
             key={organ.id}
-            onClick={() => setCurrentOrgan(organ)}
+            onClick={() => handleOrganClick(organ)}
             className="text-left rounded-2xl transition-all duration-150 flex items-center gap-3 animate-slide-right"
             style={{
               animationDelay: `${i * 40}ms`,

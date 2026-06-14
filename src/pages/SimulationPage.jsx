@@ -5,6 +5,7 @@ import OrganList from '../components/OrganList'
 import { getSystemById } from '../data/organSystems'
 import useAppStore from '../store/useAppStore'
 import { useGLTF } from "@react-three/drei"
+import { speakOrgan, speakSystem } from '../hooks/useOrganSpeech'
 
 // Lazy-load simulations
 const simulations = {
@@ -96,17 +97,8 @@ function NoVideoPlaceholder() {
   )
 }
 
-function SystemSpeakerButton({ systemId, label }) {
-  const mp3BySystemId = {
-    digestive: '/digestive_system.mp3',
-    circulatory: '/circulatory_system.mp3',
-    skeletal: '/skeletal_system.mp3',
-    muscular: '/muscular_system.mp3',
-    respiratory: '/respiratory_system.mp3',
-  }
-
-  const src = mp3BySystemId[systemId]
-
+// ← Now receives full system object instead of just systemId
+function SystemSpeakerButton({ system, label }) {
   return (
     <button
       type="button"
@@ -114,11 +106,7 @@ function SystemSpeakerButton({ systemId, label }) {
       onClick={(e) => {
         e.preventDefault()
         e.stopPropagation()
-        if (!src) return
-        try {
-          const audio = new Audio(src)
-          audio.play().catch(() => {})
-        } catch {}
+        speakSystem(system)
       }}
       className="shrink-0 inline-flex items-center justify-center"
       style={{
@@ -180,10 +168,16 @@ export default function SimulationPage() {
     setCurrentSystem(system)
 
     const timer = setTimeout(() => {
-      if (system.organs?.[2]) setCurrentOrgan(system.organs[2])
+      if (system.organs?.[2]) {
+        setCurrentOrgan(system.organs[2])
+        speakOrgan(system.organs[2])   // ← speaks default organ on load
+      }
     }, 150)
 
-    return () => clearTimeout(timer)
+    return () => {
+      clearTimeout(timer)
+      window.speechSynthesis?.cancel() // ← stop speaking when leaving page
+    }
   }, [systemId])
 
   if (!system || !SimComponent) return null
@@ -298,7 +292,7 @@ export default function SimulationPage() {
                 <span className="flex items-center gap-2">
                   {system.name}
                   <SystemSpeakerButton
-                    systemId={system.id}
+                    system={system}
                     label={`Play ${system.name} audio`}
                   />
                 </span>
@@ -326,7 +320,6 @@ export default function SimulationPage() {
                   </div>
 
                   <div className="flex gap-5 items-stretch">
-                    {/* Video or placeholder depending on system */}
                     {hasVideo
                       ? <OrganVideo src={currentOrgan.video} systemId={systemId} organId={currentOrgan.id} />
                       : <NoVideoPlaceholder />
@@ -343,7 +336,7 @@ export default function SimulationPage() {
                       <p
                         className="leading-relaxed animate-fade-in"
                         key={currentOrgan.id + '-desc'}
-                        style={{ fontSize: 13.5, color: '#5a7a96', lineHeight: 1.65 }}
+                        style={{ fontSize: 18, color: '#5a7a96', lineHeight: 1.85 }}
                       >
                         {currentOrgan.description}
                       </p>
@@ -368,7 +361,7 @@ export default function SimulationPage() {
               </div>
             )}
 
-            {/* Organs list (scroll only here) */}
+            {/* Organs list */}
             <div className="flex-1 min-h-0 px-6 pb-6 flex flex-col">
               <div
                 className="text-xs font-bold uppercase tracking-widest mb-3"

@@ -4,6 +4,7 @@ import { useGLTF, OrbitControls, Environment } from "@react-three/drei"
 import * as THREE from "three"
 import useAppStore from "../store/useAppStore"
 import SmoothCameraZoom from "./SmoothCameraZoom"
+import { speakOrgan } from '../hooks/useOrganSpeech'
 
 const MESH_TO_ORGAN_ID = {
   mouth:                   "mouth",
@@ -322,7 +323,10 @@ export default function DigestiveSimulation({ system }) {
   const handleSelect = useCallback((organId) => {
     if (!organId || !system) return
     const organ = system.organs.find((o) => o.id === organId)
-    if (organ) setCurrentOrgan(organ)
+    if (organ) {
+      setCurrentOrgan(organ)
+      speakOrgan(organ)
+    }
   }, [system, setCurrentOrgan])
 
   return (

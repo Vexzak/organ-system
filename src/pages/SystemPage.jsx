@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import Navbar from '../components/Navbar'
 import { getSystemById } from '../data/organSystems'
 import useAppStore from '../store/useAppStore'
+import { speakSystem } from '../hooks/useOrganSpeech'
 
 const systemImages = {
   digestive:   '/digestive_system.png',
@@ -123,27 +124,13 @@ export default function SystemPage() {
                   {system.name}
                 </h1>
 
+                {/* Speaker button — now uses Web Speech API (woman's voice) */}
                 <button
                   type="button"
                   onClick={(e) => {
                     e.preventDefault()
                     e.stopPropagation()
-
-                    const mp3BySystemId = {
-                      digestive: '/digestive_system.mp3',
-                      circulatory: '/circulatory_system.mp3',
-                      skeletal: '/skeletal_system.mp3',
-                      muscular: '/muscular_system.mp3',
-                      respiratory: '/respiratory_system.mp3',
-                    }
-
-                    const src = mp3BySystemId[system.id]
-                    if (!src) return
-
-                    try {
-                      const audio = new Audio(src)
-                      audio.play().catch(() => {})
-                    } catch {}
+                    speakSystem(system)
                   }}
                   aria-label={`Play ${system.name} audio`}
                   className="shrink-0 inline-flex items-center justify-center"
